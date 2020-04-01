@@ -1,30 +1,14 @@
-import pygame, classGame, classHero, classBlock
+import pygame, classGame
 
 pygame.init()
 
 game = classGame.Game()
-hero = classHero.Hero()
-block = classBlock.Block()
-
-
-
-
-
-
-
-
-
-
 
 while not game.over:
     game.setFPS()
-    game.background()
+    game.drawing()
     for e in pygame.event.get():
         if e.type == pygame.QUIT:
             game.over = True
-    hero.update()
-
-    game.display.blit(block.image, (block.x, block.randy))
-    game.display.blit(hero.image, hero.rect)
-    pygame.display.update()
+    game.update()
 pygame.quit()

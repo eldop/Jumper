@@ -1,4 +1,4 @@
-import pygame
+import pygame, classBlock, classHero, map
 
 class Game():
     def __init__(self):
@@ -15,8 +15,35 @@ class Game():
 
         self.over = False
 
+        #groups
+        self.blocks = pygame.sprite.Group()
+        self.hero = classHero.Hero()
+
+        self.map()
+
+    def update(self):
+        self.hero.update()
+        self.blocks.update()
+
     def setFPS(self):
         self.clock.tick(self.FPS)
 
-    def background(self):
+
+    def map(self):
+        self.startx = 0
+        self.starty = 0
+        self.move = 256
+        for line in map.lvl1:
+            for symbol in line:
+                if symbol == '#':
+                    block = classBlock.Block(self.startx, self.starty)
+                    self.blocks.add(block)
+                self.startx += self.move
+            self.startx = 0
+            self.starty += 128
+
+    def drawing(self):
         self.display.blit(self.back, (0, 0))
+        self.display.blit(self.hero.image, self.hero.rect)
+        self.blocks.draw(self.display)
+        pygame.display.update()

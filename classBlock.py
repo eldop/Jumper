@@ -1,13 +1,13 @@
-import pygame, random
+import pygame
 
 class Block(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load('block.png')
         self.rect = self.image.get_rect()
-        self.randy = random.randint(600, 800)
-        self.x = 760
-
+        self.rect.x = x
+        self.rect.y = y
+        self.speed = 1
 
     def update(self):
-        pass
+        self.rect.x -= self.speed
