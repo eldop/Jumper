@@ -27,6 +27,7 @@ class Hero(pygame.sprite.Sprite):
             self.rect.bottom = self.ground
             self.speed[1] = 0
 
+
         else:
             self.onGround = False
             self.speed[1] += self.gravity
