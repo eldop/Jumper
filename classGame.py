@@ -11,7 +11,7 @@ class Game():
 
         # Clock
         self.clock = pygame.time.Clock()
-        self.FPS = 15
+        self.FPS = 30
 
         self.over = False
 
@@ -24,6 +24,7 @@ class Game():
     def update(self):
         self.hero.update()
         self.blocks.update()
+        self.hero.checkcollide(self.blocks)
 
     def setFPS(self):
         self.clock.tick(self.FPS)
@@ -44,6 +45,6 @@ class Game():
 
     def drawing(self):
         self.display.blit(self.back, (0, 0))
-        self.display.blit(self.hero.image, self.hero.rect)
         self.blocks.draw(self.display)
+        self.display.blit(self.hero.myimage, self.hero.rect)
         pygame.display.update()

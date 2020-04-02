@@ -7,7 +7,7 @@ class Block(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.speed = 1
+        self.speed = 3
 
     def update(self):
         self.rect.x -= self.speed

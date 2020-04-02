@@ -1,83 +1,62 @@
 import pygame
 
+
 class Hero(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-
+        self.ground = 900
         self.cutimages()
-        self.countanimation = 0
-        self.jumpcountanimation = 0
 
-        self.stayingimage = pygame.image.load('stayingsheet.png')
         self.run = False
         self.bottom = [100, 100]
-        self.w = self.stayingimage.get_width() // 3
-        self.h = self.stayingimage.get_height() // 3
-        self.stayingimage = pygame.transform.scale(self.stayingimage, (self.w, self.h))
 
-        self.ground = 875
-        self.onground = False
+        self.onBlock = False
+        self.onGround = False
 
         self.speed = [15, 0]
-        self.gravity = 1
-        self.up = 15
-        self.image = self.stayingimage
-        self.rect = self.image.get_rect()
+        self.gravity = 3
+        self.up = 36
         self.ifjump = True
 
-        #self.stayanimation()
+        # self.stayanimation()
 
     def update(self):
-        if self.ifjump:
-            self.jump()
+
+        if self.rect.bottom >= self.ground:
+            self.onGround = True
+            self.rect.bottom = self.ground
+            self.speed[1] = 0
+
         else:
-            pass
+            self.onGround = False
+            self.speed[1] += self.gravity
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_RIGHT]:
-            #self.runanimation()
-            #self.rect.bottom += self.speed[0]
             self.speed[0] = 15
 
         elif keys[pygame.K_LEFT]:
-            #self.runanimation()
-            #self.image = pygame.transform.flip(self.image, 1, 0)
-            #self.bottom[0] -= self.speed[0]
             self.speed[0] = -15
 
-
-        elif keys[pygame.K_UP]:
-            if self.onground:
-                #self.jumpanimation()
-                self.jump()
         else:
-            self.speed[0] = 0
-            if self.onground == True:
-                #self.stayanimation()
-                pass
+            if self.onGround == True:
+                self.speed[0] = 0
 
+        if keys[pygame.K_UP]:
+            if self.onGround or self.onBlock:
+                self.onBlock = False
+                self.speed[0] *= 1.5
+                self.speed[1] -= self.up
+                print(self.onBlock)
 
-
-
-        self.bottom[1] += self.speed[1]
-        if self.bottom[1] < self.ground:
-            self.speed[1] += self.gravity
-            self.onground = False
-        else:
-            self.speed[1] = 0
-            self.rect.bottom = self.ground
-            self.onground = True
+        self.animation()
         self.rect.move_ip(self.speed)
-        #print(self.bottom)
-        #print(self.rect)
-
-
 
     def cutimages(self):
         self.loadimage = pygame.image.load('speedsprite.png')
-
-
+        self.runcountanimation = 0
         self.runimages = []
+
         self.runimages.append(self.loadimage.subsurface(30, 45, 110, 130))
         self.runimages.append(self.loadimage.subsurface(220, 45, 80, 130))
         self.runimages.append(self.loadimage.subsurface(380, 45, 90, 130))
@@ -92,6 +71,7 @@ class Hero(pygame.sprite.Sprite):
 
         self.jumpingsheet = pygame.image.load('jumpingsheet.png')
         self.jumpingimages = []
+        self.jumpcountanimation = 0
 
         self.jumpingimages.append(self.jumpingsheet.subsurface(6, 30, 72, 111))
         self.jumpingimages.append(self.jumpingsheet.subsurface(93, 17, 46, 125))
@@ -101,44 +81,58 @@ class Hero(pygame.sprite.Sprite):
         self.jumpingimages.append(self.jumpingsheet.subsurface(395, 27, 70, 114))
         self.jumpingimages.append(self.jumpingsheet.subsurface(470, 44, 89, 97))
 
-
-
-
+        self.stayingimage = pygame.image.load('stayingsheet.png')
+        self.w = self.stayingimage.get_width() // 3
+        self.h = self.stayingimage.get_height() // 3
+        self.stayingimage = pygame.transform.scale(self.stayingimage, (self.w, self.h))
+        self.myimage = self.stayingimage
+        self.rect = self.myimage.get_rect()
+        self.rect.bottom = self.ground
 
     def runanimation(self):
-        self.image = self.runimages[self.countanimation]
-        self.rect = self.image.get_rect()
-        self.rect.bottom = self.bottom[1]
-        self.rect.centerx = self.bottom[0]
-        if self.countanimation < len(self.runimages) - 1:
-            self.countanimation += 1
+        self.myimage = self.runimages[self.runcountanimation]
+        self.colliderect = self.myimage.get_rect()
+        self.colliderect.bottom = self.rect.bottom
+        if self.runcountanimation < len(self.runimages) - 1:
+            self.runcountanimation += 1
         else:
-            self.countanimation = 0
-
-
-
-
+            self.runcountanimation = 0
 
     def jumpanimation(self):
-        self.image = self.jumpingimages[self.jumpcountanimation]
-        self.rect = self.image.get_rect()
-        self.rect.bottom = self.bottom[1]
-        self.rect.centerx = self.bottom[0]
+        self.myimage = self.jumpingimages[self.jumpcountanimation]
+        self.colliderect = self.myimage.get_rect()
+        self.colliderect.bottom = self.rect.bottom
         if self.jumpcountanimation < len(self.jumpingimages) - 1:
             self.jumpcountanimation += 1
         else:
             self.jumpcountanimation = 0
 
-
-
-
     def stayanimation(self):
-        self.image = self.stayingimage
-        self.rect = self.image.get_rect()
-        self.rect.bottom = self.bottom[1]
-        self.rect.centerx = self.bottom[0]
+        self.myimage = self.stayingimage
+        self.colliderect = self.myimage.get_rect()
+        self.colliderect.bottom = self.rect.bottom
 
 
-    def jump(self):
-        self.speed[0] *= 1.5
-        self.speed[1] -= self.up
+    def animation(self):
+        if self.speed[0] == 0 and self.speed[1] == 0 and self.onGround:
+            self.stayanimation()
+        else:
+            if self.speed[1] != 0 or not self.onGround or not self.onBlock:
+                self.jumpanimation()
+            else:
+                self.runanimation()
+
+        if self.speed[0] < 0:
+            self.myimage = pygame.transform.flip(self.myimage, 1, 0)
+        else:
+            self.myimage = self.myimage
+
+
+    def checkcollide(self, blocks):
+        for block in blocks.sprites():
+            if block.rect.left <= self.rect.centerx <= block.rect.right:
+                if self.rect.colliderect(block.rect):
+                    self.onBlock = True
+                    self.rect.bottom = block.rect.top + 2
+                else:
+                    self.onBlock = False
